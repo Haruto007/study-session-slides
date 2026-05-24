@@ -209,12 +209,13 @@
       position: relative;
       width: 100%;
       min-width: 0;
-      min-height: 100%;
-      padding: 40px 44px 34px;
+      height: 100%;
+      padding: 28px 36px 24px;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      gap: 28px;
-      overflow: visible;
+      gap: 18px;
+      overflow-y: auto;
+      overflow-x: hidden;
       border-radius: var(--radius-xl);
       background: var(--panel-strong);
       border: 1px solid var(--line);
@@ -270,31 +271,33 @@
       margin: 0;
       max-width: 980px;
       font-family: var(--font-display);
-      font-size: clamp(34px, 4.6vw, 64px);
-      line-height: 1.04;
+      font-size: clamp(28px, 3.8vw, 48px);
+      line-height: 1.1;
       letter-spacing: -0.045em;
     }
 
     .subtitle {
       max-width: 860px;
       color: var(--muted);
-      font-size: clamp(16px, 2vw, 20px);
-      line-height: 1.72;
+      font-size: clamp(14px, 1.6vw, 16px);
+      line-height: 1.6;
     }
 
     .slide-body {
       min-height: 0;
       display: grid;
       align-content: start;
-      gap: 18px;
+      gap: 12px;
+      overflow-y: auto;
+      padding-right: 8px;
     }
 
     .stack {
       display: grid;
-      gap: 18px;
+      gap: 12px;
       align-content: start;
       min-height: 0;
-      padding: 24px;
+      padding: 16px;
       border-radius: var(--radius-lg);
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.72);
@@ -302,20 +305,20 @@
 
     .lead {
       margin: 0;
-      font-size: 18px;
-      line-height: 1.86;
+      font-size: 15px;
+      line-height: 1.7;
     }
 
     .section-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
+      gap: 10px;
     }
 
     .section {
       display: grid;
-      gap: 10px;
-      padding: 18px 18px 16px;
+      gap: 8px;
+      padding: 12px 12px 10px;
       border-radius: var(--radius-md);
       background: rgba(255, 248, 244, 0.92);
       border: 1px solid rgba(180, 85, 53, 0.12);
@@ -327,7 +330,7 @@
 
     .section-label {
       color: var(--accent-strong);
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -337,40 +340,41 @@
       margin: 0;
       padding-left: 1.2em;
       display: grid;
-      gap: 10px;
-      font-size: 18px;
-      line-height: 1.72;
+      gap: 6px;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     .bullet-list.tight {
-      gap: 8px;
-      font-size: 16px;
+      gap: 4px;
+      font-size: 13px;
     }
 
     .timeline {
       display: grid;
-      gap: 12px;
+      gap: 8px;
     }
 
     .timeline-item {
       display: grid;
-      grid-template-columns: 94px 1fr;
-      gap: 14px;
+      grid-template-columns: 70px 1fr;
+      gap: 10px;
       align-items: start;
-      padding: 16px 18px;
+      padding: 10px 12px;
       border-radius: var(--radius-md);
       background: rgba(255, 248, 244, 0.92);
       border: 1px solid rgba(180, 85, 53, 0.12);
     }
 
     .timeline-time {
-      padding: 10px 12px;
-      border-radius: 14px;
+      padding: 6px 8px;
+      border-radius: 10px;
       background: var(--accent-soft);
       color: var(--accent-strong);
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 800;
       text-align: center;
+      white-space: nowrap;
     }
 
     .timeline-copy strong,
@@ -379,63 +383,63 @@
     }
 
     .timeline-copy strong {
-      margin-bottom: 5px;
-      font-size: 16px;
+      margin-bottom: 2px;
+      font-size: 13px;
     }
 
     .timeline-copy span {
       color: var(--muted);
-      font-size: 14px;
-      line-height: 1.65;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     .split-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
+      gap: 10px;
     }
 
     .mini-card {
-      padding: 22px;
+      padding: 14px;
       border-radius: var(--radius-lg);
       background: linear-gradient(145deg, rgba(255, 246, 240, 0.98), rgba(255, 255, 255, 0.95));
       border: 1px solid rgba(180, 85, 53, 0.12);
     }
 
     .mini-card h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
+      margin: 0 0 4px;
+      font-size: 15px;
     }
 
     .mini-card p {
       margin: 0;
       color: var(--muted);
-      font-size: 16px;
-      line-height: 1.75;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 6px;
     }
 
     .chip {
-      padding: 11px 14px;
+      padding: 6px 10px;
       border-radius: 999px;
       background: var(--accent-soft);
       color: var(--accent-strong);
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
     }
 
     .quote-box {
-      padding: 20px 22px;
+      padding: 12px 14px;
       border-radius: var(--radius-lg);
       background: linear-gradient(135deg, rgba(255, 238, 228, 0.94), rgba(255, 250, 246, 0.98));
       border: 1px solid rgba(180, 85, 53, 0.16);
-      font-size: 20px;
-      line-height: 1.8;
+      font-size: 14px;
+      line-height: 1.6;
       font-weight: 700;
     }
 
@@ -443,14 +447,15 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      gap: 18px;
+      gap: 12px;
+      margin-top: 8px;
     }
 
     .footer-note {
       max-width: 760px;
       color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     .progress {
@@ -651,15 +656,15 @@
       }
 
       .slide {
-        padding: 24px 18px 22px;
-        gap: 20px;
+        padding: 16px 12px 14px;
+        gap: 12px;
       }
 
       .subtitle,
       .lead,
       .bullet-list {
-        font-size: 15px;
-        line-height: 1.72;
+        font-size: 13px;
+        line-height: 1.5;
       }
 
       .stack,
