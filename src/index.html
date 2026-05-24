@@ -973,8 +973,6 @@
 
     const slideTrack = document.getElementById('slideTrack');
     const viewport = document.querySelector('.viewport');
-    const tocList = document.getElementById('tocList');
-    const tocCounter = document.getElementById('tocCounter');
     const slideCount = document.getElementById('slideCount');
     const chapterLabel = document.getElementById('chapterLabel');
     const prevButton = document.getElementById('prevButton');
@@ -1104,29 +1102,9 @@
       slideTrack.innerHTML = slides.map(renderSlide).join('');
     }
 
-    function buildToc() {
-      tocList.innerHTML = slides.map((slide, index) => {
-        return [
-          '<button class="toc-item" type="button" role="tab" aria-selected="false" data-index="' + index + '">',
-          '<small>' + escapeHtml(slide.kicker) + '</small>',
-          '<span>' + escapeHtml(slide.title) + '</span>',
-          '</button>'
-        ].join('');
-      }).join('');
-
-      tocList.addEventListener('click', (event) => {
-        const trigger = event.target.closest('.toc-item');
-        if (!trigger) {
-          return;
-        }
-        goTo(Number(trigger.dataset.index));
-      });
-    }
-
     function syncUi() {
       const slide = slides[currentIndex];
       slideCount.textContent = 'Slide ' + (currentIndex + 1) + ' / ' + slides.length;
-      tocCounter.textContent = (currentIndex + 1) + ' / ' + slides.length;
       chapterLabel.textContent = slide.chapter;
       prevButton.disabled = currentIndex === 0;
       nextButton.disabled = currentIndex === slides.length - 1;
@@ -1142,15 +1120,6 @@
           isProgrammaticScroll = false;
         }, 460);
       }
-
-      Array.prototype.forEach.call(tocList.querySelectorAll('.toc-item'), (button, index) => {
-        const isActive = index === currentIndex;
-        button.classList.toggle('active', isActive);
-        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        if (isActive) {
-          button.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
-      });
     }
 
     function goTo(index) {
@@ -1170,20 +1139,10 @@
       if (nextIndex !== currentIndex) {
         currentIndex = nextIndex;
         slideCount.textContent = 'Slide ' + (currentIndex + 1) + ' / ' + slides.length;
-        tocCounter.textContent = (currentIndex + 1) + ' / ' + slides.length;
         chapterLabel.textContent = slides[currentIndex].chapter;
         prevButton.disabled = currentIndex === 0;
         nextButton.disabled = currentIndex === slides.length - 1;
         window.location.hash = 'slide-' + (currentIndex + 1);
-
-        Array.prototype.forEach.call(tocList.querySelectorAll('.toc-item'), (button, index) => {
-          const isActive = index === currentIndex;
-          button.classList.toggle('active', isActive);
-          button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-          if (isActive) {
-            button.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-          }
-        });
       }
     }
 
@@ -1254,7 +1213,6 @@
     });
 
     buildSlides();
-    buildToc();
     syncUi();
   </script>
 </body>
