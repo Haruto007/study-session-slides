@@ -257,6 +257,12 @@
       gap: 10px;
     }
 
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .nav-button {
       min-width: 92px;
       min-height: 44px;
@@ -274,6 +280,21 @@
       color: var(--text);
       box-shadow: none;
       border: 1px solid var(--line);
+    }
+
+    .nav-button.ghost {
+      min-width: 0;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      box-shadow: none;
+      border: 1px solid var(--line);
+    }
+
+    .nav-button.ghost.active {
+      background: rgba(255, 231, 218, 0.95);
+      color: var(--accent-strong);
+      border-color: rgba(219, 122, 85, 0.28);
     }
 
     .nav-button:hover,
@@ -386,6 +407,10 @@
       grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.9fr);
       gap: 24px;
       align-items: stretch;
+    }
+
+    .slide-main.single-column {
+      grid-template-columns: 1fr;
     }
 
     .stack,
@@ -684,11 +709,31 @@
       .controls {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
       }
 
       .nav-button {
         min-width: 0;
-        flex: 1;
+      }
+
+      .toggle-group,
+      .nav-pager {
+        width: 100%;
+      }
+
+      .toggle-group {
+        order: 1;
+      }
+
+      .nav-pager {
+        order: 2;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .nav-pager .nav-button {
+        width: 100%;
       }
 
       .slide {
@@ -769,8 +814,14 @@
           <div class="chapter" id="chapterLabel">タイトル</div>
         </div>
         <div class="controls">
-          <button id="prevButton" class="nav-button secondary" type="button" aria-label="前のスライド">前へ</button>
-          <button id="nextButton" class="nav-button" type="button" aria-label="次のスライド">次へ</button>
+          <div class="toggle-group">
+            <button id="notesToggle" class="nav-button ghost" type="button" aria-pressed="false">台本メモ</button>
+            <button id="qaToggle" class="nav-button ghost" type="button" aria-pressed="false">Q&A</button>
+          </div>
+          <div class="nav-pager">
+            <button id="prevButton" class="nav-button secondary" type="button" aria-label="前のスライド">前へ</button>
+            <button id="nextButton" class="nav-button" type="button" aria-label="次のスライド">次へ</button>
+          </div>
         </div>
       </header>
 
@@ -1130,8 +1181,12 @@
     const chapterLabel = document.getElementById('chapterLabel');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
+    const notesToggle = document.getElementById('notesToggle');
+    const qaToggle = document.getElementById('qaToggle');
 
     let currentIndex = clampIndex(readHashIndex());
+    let showNotes = !window.matchMedia('(max-width: 720px)').matches;
+    let showQa = !window.matchMedia('(max-width: 720px)').matches;
 
     function readHashIndex() {
       const raw = window.location.hash.replace('#slide-', '');
@@ -1249,10 +1304,14 @@
         renderChips(slide.chips)
       ].join('');
 
-      const sidePanels = [renderNotes(slide.notes)];
-      if (slide.qa && slide.qa.length) {
+      const sidePanels = [];
+      if (showNotes) {
+        sidePanels.push(renderNotes(slide.notes));
+      }
+      if (showQa && slide.qa && slide.qa.length) {
         sidePanels.push(renderQa(slide.qa));
       }
+      const hasSidePanels = sidePanels.length > 0;
 
       slideRoot.classList.remove('enter');
       void slideRoot.offsetWidth;
@@ -1264,11 +1323,11 @@
         '<h1 class="slide-title">' + escapeHtml(slide.title) + '</h1>',
         '<div class="slide-subtitle">' + escapeHtml(slide.subtitle) + '</div>',
         '</div>',
-        '<div class="slide-main">',
+        '<div class="slide-main' + (hasSidePanels ? '' : ' single-column') + '">',
         '<section class="stack' + ((slide.sections && slide.sections.length > 1) || slide.timeline || slide.splitCards ? '' : ' compact') + '">',
         leftColumn,
         '</section>',
-        '<div style="display:grid; gap:16px; align-content:start;">' + sidePanels.join('') + '</div>',
+        hasSidePanels ? '<div style="display:grid; gap:16px; align-content:start;">' + sidePanels.join('') + '</div>' : '',
         '</div>',
         '<div class="slide-footer">',
         '<div class="footer-note">' + escapeHtml(slide.footer || '') + '</div>',
@@ -1284,6 +1343,11 @@
       chapterLabel.textContent = slide.chapter;
       prevButton.disabled = index === 0;
       nextButton.disabled = index === slides.length - 1;
+      notesToggle.classList.toggle('active', showNotes);
+      notesToggle.setAttribute('aria-pressed', showNotes ? 'true' : 'false');
+      qaToggle.classList.toggle('active', showQa);
+      qaToggle.setAttribute('aria-pressed', showQa ? 'true' : 'false');
+      qaToggle.hidden = !(slide.qa && slide.qa.length);
 
       window.location.hash = 'slide-' + (index + 1);
 
@@ -1325,6 +1389,14 @@
 
     prevButton.addEventListener('click', () => goTo(currentIndex - 1));
     nextButton.addEventListener('click', () => goTo(currentIndex + 1));
+    notesToggle.addEventListener('click', () => {
+      showNotes = !showNotes;
+      renderSlide(currentIndex);
+    });
+    qaToggle.addEventListener('click', () => {
+      showQa = !showQa;
+      renderSlide(currentIndex);
+    });
 
     slideRoot.addEventListener('click', (event) => {
       if (event.target.closest('button')) {
