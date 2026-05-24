@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIバード勉強会</title>
+  <style>
+    :root {
+      --bg-1: #fff6ef;
+      --bg-2: #fffdf9;
+      --bg-3: #ffe0d2;
+      --panel: rgba(255, 255, 255, 0.78);
+      --panel-strong: rgba(255, 255, 255, 0.92);
+      --text: #3f2c28;
+      --muted: #7d675f;
+      --line: rgba(126, 91, 75, 0.16);
+      --accent: #db7a55;
+      --accent-strong: #bc5c3a;
+      --accent-soft: #ffe7da;
+      --shadow: 0 26px 60px rgba(149, 91, 65, 0.16);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --font-display: "Avenir Next", "Hiragino Sans", "Yu Gothic", sans-serif;
+      --font-body: "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+      color: var(--text);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(circle at top left, rgba(255, 223, 203, 0.95), transparent 34%),
+        radial-gradient(circle at top right, rgba(255, 237, 225, 0.92), transparent 26%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, #fff7f1);
+    }
+
+    button {
+      font: inherit;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      position: relative;
+      min-height: 100vh;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255, 212, 190, 0.45), transparent 16%),
+        radial-gradient(circle at 82% 18%, rgba(255, 230, 210, 0.4), transparent 18%),
+        radial-gradient(circle at 72% 84%, rgba(239, 158, 116, 0.16), transparent 20%);
+    }
+
+    .sidebar,
+    .stage {
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      padding: 24px 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand h1 {
+      margin: 18px 0 12px;
+      font-family: var(--font-display);
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .toc {
+      padding: 16px;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 6px 0;
+    }
+
+    .toc-header strong {
+      font-size: 15px;
+    }
+
+    .toc-header span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toc-list {
+      display: grid;
+      gap: 8px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .toc-item {
+      width: 100%;
+      padding: 14px;
+      text-align: left;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.56);
+      color: var(--text);
+      border: 1px solid transparent;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .toc-item:hover,
+    .toc-item:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(219, 122, 85, 0.28);
+      background: rgba(255, 255, 255, 0.82);
+      outline: none;
+    }
+
+    .toc-item.active {
+      background: linear-gradient(135deg, rgba(219, 122, 85, 0.18), rgba(255, 255, 255, 0.96));
+      border-color: rgba(219, 122, 85, 0.3);
+    }
+
+    .toc-item small,
+    .toc-item span {
+      display: block;
+    }
+
+    .toc-item small {
+      margin-bottom: 5px;
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .toc-item span {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .sidebar-footer {
+      padding: 0 6px 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .stage {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .pill {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .chapter {
+      min-width: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-button {
+      min-width: 92px;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 12px 24px rgba(188, 92, 58, 0.22);
+      transition: transform 140ms ease, opacity 140ms ease;
+    }
+
+    .nav-button.secondary {
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid var(--line);
+    }
+
+    .nav-button:hover,
+    .nav-button:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .nav-button:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .slide-wrap {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+    }
+
+    .slide {
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 108px);
+      padding: 34px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 26px;
+      overflow: hidden;
+    }
+
+    .slide::before,
+    .slide::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .slide::before {
+      width: 280px;
+      height: 280px;
+      top: -110px;
+      right: -70px;
+      background: radial-gradient(circle, rgba(255, 216, 197, 0.68), rgba(255, 216, 197, 0));
+    }
+
+    .slide::after {
+      width: 220px;
+      height: 220px;
+      bottom: -120px;
+      left: -80px;
+      background: radial-gradient(circle, rgba(255, 236, 222, 0.96), rgba(255, 236, 222, 0));
+    }
+
+    .slide.enter {
+      animation: slide-in 360ms ease;
+    }
+
+    @keyframes slide-in {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.988);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .slide-header,
+    .slide-main,
+    .slide-footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-header {
+      display: grid;
+      gap: 12px;
+    }
+
+    .slide-kicker {
+      color: var(--accent-strong);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .slide-title {
+      margin: 0;
+      max-width: 980px;
+      font-family: var(--font-display);
+      font-size: clamp(34px, 4.5vw, 60px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .slide-subtitle {
+      max-width: 860px;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 20px);
+      line-height: 1.7;
+    }
+
+    .slide-main {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.9fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .stack,
+    .note-panel,
+    .qa-panel {
+      min-height: 0;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .stack {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .stack.compact {
+      gap: 12px;
+    }
+
+    .lead {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .section-block {
+      display: grid;
+      gap: 10px;
+    }
+
+    .section-label {
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    .bullet-list,
+    .note-list,
+    .qa-list {
+      margin: 0;
+      padding-left: 1.2em;
+      display: grid;
+      gap: 10px;
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .bullet-list.tight,
+    .note-list.tight,
+    .qa-list.tight {
+      gap: 8px;
+      font-size: 16px;
+    }
+
+    .bullet-list strong,
+    .note-list strong,
+    .qa-list strong {
+      color: var(--accent-strong);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 244, 238, 0.9);
+      border: 1px solid rgba(219, 122, 85, 0.14);
+    }
+
+    .mini-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .mini-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .note-panel,
+    .qa-panel {
+      padding: 22px 20px;
+      display: grid;
+      align-content: start;
+      gap: 16px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .panel-title span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .quote-box {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(255, 236, 226, 0.92), rgba(255, 250, 246, 0.96));
+      border: 1px solid rgba(219, 122, 85, 0.18);
+      font-size: 18px;
+      line-height: 1.8;
+      font-weight: 700;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .timeline-time {
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255, 232, 220, 0.92);
+      color: var(--accent-strong);
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .timeline-copy {
+      padding-top: 4px;
+    }
+
+    .timeline-copy strong,
+    .timeline-copy span {
+      display: block;
+    }
+
+    .timeline-copy strong {
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    .timeline-copy span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+    }
+
+    .footer-note {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .progress {
+      min-width: 180px;
+      display: grid;
+      gap: 10px;
+      justify-items: end;
+    }
+
+    .progress-bar {
+      width: 180px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(219, 122, 85, 0.12);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      transition: width 180ms ease;
+    }
+
+    .progress-copy {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    @media (max-width: 1080px) {
+      body {
+        overflow: auto;
+      }
+
+      .app-shell {
+        min-height: auto;
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        order: 2;
+      }
+
+      .stage {
+        order: 1;
+      }
+
+      .slide {
+        min-height: auto;
+      }
+
+      .slide-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app-shell {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .brand {
+        padding: 20px 18px;
+      }
+
+      .brand h1 {
+        font-size: 26px;
+      }
+
+      .toc {
+        padding: 14px;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+        padding: 12px;
+      }
+
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .nav-button {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .slide {
+        padding: 22px 18px;
+        gap: 18px;
+      }
+
+      .slide-subtitle,
+      .lead,
+      .bullet-list,
+      .note-list,
+      .qa-list {
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .stack,
+      .note-panel,
+      .qa-panel {
+        padding: 18px 16px;
+        border-radius: 22px;
+      }
+
+      .split-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .progress {
+        min-width: 0;
+        width: 100%;
+        justify-items: start;
+      }
+
+      .progress-bar {
+        width: 100%;
+      }
+
+      .slide-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient"></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <section class="brand card">
+        <div class="eyebrow">AI Bird Study Session</div>
+        <h1>顧客との関係構築から、継続支援・追加相談につなげる実践ノウハウ共有</h1>
+        <p>AIを教える人ではなく、顧客の業務を一緒に改善する伴走者として、再現可能な現場の工夫を共有する30分です。</p>
+      </section>
+
+      <section class="toc card">
+        <div class="toc-header">
+          <strong>目次</strong>
+          <span id="tocCounter">1 / 10</span>
+        </div>
+        <div id="tocList" class="toc-list" role="tablist" aria-label="スライド一覧"></div>
+      </section>
+
+      <div class="sidebar-footer">
+        左右キー、画面クリック、または下のボタンで移動できます。<br>
+        URL ハッシュに現在位置を保持するので、再読込しても同じスライドから再開できます。
+      </div>
+    </aside>
+
+    <main class="stage">
+      <header class="topbar card">
+        <div class="meta">
+          <div class="pill" id="slideCount">Slide 1 / 10</div>
+          <div class="chapter" id="chapterLabel">タイトル</div>
+        </div>
+        <div class="controls">
+          <button id="prevButton" class="nav-button secondary" type="button" aria-label="前のスライド">前へ</button>
+          <button id="nextButton" class="nav-button" type="button" aria-label="次のスライド">次へ</button>
+        </div>
+      </header>
+
+      <div class="slide-wrap">
+        <article id="slideRoot" class="slide card" aria-live="polite"></article>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const slides = [
+      {
+        kicker: 'Opening',
+        title: 'AIバード勉強会',
+        chapter: 'タイトル',
+        subtitle: '顧客との関係構築から、継続支援・追加相談につなげる実践ノウハウ共有',
+        lead: '特別な営業スキルではなく、日々の顧客理解の積み重ねによって、相談しやすい関係と継続支援が生まれる。その再現可能な工夫を30分で共有します。',
+        timeline: [
+          { time: '0-3分', title: 'オープニング・自己紹介', body: '背景共有と今日の前提合わせ' },
+          { time: '3-8分', title: '最初に意識していること', body: 'AIではなく業務理解から入る姿勢' },
+          { time: '8-15分', title: '次の相談を引き出す会話', body: '単発回答で終わらせない聞き方' },
+          { time: '15-22分', title: '余った時間の使い方', body: '提案準備としての投資時間' },
+          { time: '22-27分', title: '継続につながった事例', body: '小さい支援から広がった実例' },
+          { time: '27-30分', title: 'Q&A・締め', body: '現場の悩みに答えながら締める' }
+        ],
+        notes: [
+          '冒頭で「営業ノウハウ」ではなく「現場で意識している再現可能な工夫」と定義すると、参加者が受け取りやすいです。',
+          '30分で全部を深く話すより、明日から真似できる観点を3つ持ち帰ってもらう空気づくりを意識します。',
+          '肩肘張らず、実際の現場で感じたことを共有する会として温度感を整えます。'
+        ],
+        qa: [
+          { q: '営業が得意ではなくても再現できますか？', a: 'はい。今回の軸は営業トークではなく、顧客の業務理解と小さな改善の積み重ねです。' },
+          { q: 'AIの専門知識が浅くても大丈夫ですか？', a: '最初から全部知っている必要はありません。まずは課題を理解し、一緒に整理できることが大切です。' }
+        ],
+        footer: '今日のキーワードは「顧客理解」「小さい成功体験」「相談しやすい人」です。'
+      },
+      {
+        kicker: '0-3 min',
+        title: 'オープニング・自己紹介',
+        chapter: 'オープニング・自己紹介',
+        subtitle: 'まずは自分の立ち位置と、なぜこのテーマを話すのかを共有します。',
+        sections: [
+          {
+            label: '話す内容',
+            bullets: [
+              '自己紹介',
+              '現在の稼働状況',
+              'どのような顧客を担当しているか',
+              '今回登壇することになった背景'
+            ]
+          },
+          {
+            label: '伝えたいこと',
+            bullets: [
+              '特別な営業スキルではなく、日々の顧客理解の積み重ねであること',
+              '再現可能な内容を共有する会であること',
+              '実際の現場で意識していることを中心に話すこと'
+            ]
+          }
+        ],
+        notes: [
+          '実績を盛るよりも「自分も試行錯誤してきた」という等身大の話し方に寄せると、参加者が自分事化しやすくなります。',
+          '顧客との距離感や担当領域を一言で伝えておくと、その後の事例にも納得感が出ます。',
+          '「今日は正解を教える場ではなく、現場の工夫を持ち帰る場です」と置いておくと空気が柔らかくなります。'
+        ],
+        qa: [
+          { q: '自己紹介でどこまで話すべきですか？', a: '長くしすぎず、今回のテーマと関係する経験に絞るのが伝わりやすいです。' }
+        ],
+        footer: '最初の3分で、参加者に「これは自分にもできそう」と思ってもらうのが狙いです。'
+      },
+      {
+        kicker: '3-8 min',
+        title: 'まず最初に意識していること',
+        chapter: '最初に意識していること',
+        subtitle: '「AIを教える」のではなく「業務理解をする」。この視点の違いが、その後の相談量を変えます。',
+        lead: '顧客が本当に欲しいのはAIそのものではなく、業務が少しでも楽になること。だからこそ、最初に聞くべきはツールではなく業務です。',
+        sections: [
+          {
+            label: '話す内容',
+            bullets: [
+              'まずは業務内容を聞く',
+              'AIツールの説明から入らない',
+              '顧客が困っていることを探す',
+              'AI導入支援ではなく、業務改善支援として向き合う'
+            ]
+          }
+        ],
+        chips: [
+          '毎回手入力している作業',
+          '提案書作成の負担',
+          'SNS投稿が継続できない',
+          '社内共有がうまくできていない',
+          '情報整理が属人化している'
+        ],
+        notes: [
+          'ここでは「AIを入れましょう」ではなく、「どこで時間がかかっていますか？」と聞く姿勢を強調します。',
+          '月2時間契約でも、業務理解が進むと「実は他にも…」という相談が増えやすいことを実感ベースで伝えます。',
+          '参加者がすぐに使えるよう、質問例を具体的に言うのが効果的です。'
+        ],
+        qa: [
+          { q: '最初にAIの話を期待されている場合は？', a: '期待には応えつつ、すぐに業務の話へ橋渡しします。AIの説明だけで終わらないのが大事です。' },
+          { q: '業務理解に時間をかけすぎるのが不安です', a: '最初から完璧に把握する必要はありません。小さく聞いて、小さく仮説を返すだけでも十分です。' }
+        ],
+        footer: '「AIを売る」のではなく、「業務を理解してくれる人」になることが入口です。'
+      },
+      {
+        kicker: '8-15 min',
+        title: '次の相談を引き出す会話のコツ 1',
+        chapter: '会話のコツ',
+        subtitle: '単発相談で終わらせないために、答えを返す前後で問いを広げます。',
+        splitCards: [
+          {
+            title: '悪い例',
+            body: '「できますよ」で終わる。目の前の相談だけに答えて会話が閉じてしまう。'
+          },
+          {
+            title: '良い例',
+            body: '「今って他にも似た作業ありますか？」「毎月発生していますか？」と周辺業務まで聞く。'
+          }
+        ],
+        sections: [
+          {
+            label: '深掘りの質問例',
+            bullets: [
+              '今って他にも似た作業ありますか？',
+              '誰が担当していますか？',
+              '毎月発生していますか？',
+              '他部署や他店舗でも同じですか？'
+            ]
+          },
+          {
+            label: 'ポイント',
+            bullets: [
+              '横展開できる業務を探す',
+              '顧客自身も気づいていない課題を深掘りする'
+            ]
+          }
+        ],
+        notes: [
+          'このパートでは「答える力」より「広げる力」のほうが継続支援につながることを伝えます。',
+          '質問は詰問にならないよう、興味を持って整理を手伝うトーンで話すのが大事です。',
+          '「その場で全部解決しなくても、次の相談の種が見つかれば十分」という考えも添えます。'
+        ],
+        qa: [
+          { q: '深掘りしすぎて嫌がられませんか？', a: '聞き方次第です。改善の糸口を一緒に探すスタンスなら、むしろ理解してくれている感につながりやすいです。' }
+        ],
+        footer: '単発回答で終わらない問いが、次の相談を自然に生みます。'
+      },
+      {
+        kicker: '8-15 min',
+        title: '次の相談を引き出す会話のコツ 2',
+        chapter: '会話のコツ',
+        subtitle: '顧客がまだ言語化できていない課題を、やさしく見える形にして返します。',
+        sections: [
+          {
+            label: '言語化の例',
+            bullets: [
+              'それ、AI化というより業務整理した方が早そうですね',
+              '毎回確認しているなら自動通知できそうです',
+              '他の人でも再現できる形にした方が良さそうですね'
+            ]
+          },
+          {
+            label: 'ポイント',
+            bullets: [
+              'AIを売り込むのではなく、業務全体を見る',
+              '顧客に「理解してくれている感」を持ってもらう'
+            ]
+          }
+        ],
+        notes: [
+          'ここは「提案」より「整理して返す」が主役です。言い切りすぎず、仮説として返すと受け入れられやすいです。',
+          '顧客が気づいていない課題を代わりに言葉にできると、相談相手としての信頼が一段上がります。',
+          'AIに寄せるより、業務全体を見ている人だと伝わるフレーズを意識して紹介します。'
+        ],
+        qa: [
+          { q: 'AI化を期待されているのに業務整理の話をしても大丈夫ですか？', a: 'むしろ効果が出る近道なら歓迎されやすいです。目的はAI導入ではなく業務改善だと共有します。' }
+        ],
+        footer: '「理解してくれている」と感じてもらえる一言が、次の会話を生みます。'
+      },
+      {
+        kicker: '8-15 min',
+        title: '次の相談を引き出す会話のコツ 3',
+        chapter: '会話のコツ',
+        subtitle: '大きな提案よりも、まずは小さく成果を出して信頼を積み上げます。',
+        sections: [
+          {
+            label: '小さい成功体験の作り方',
+            bullets: [
+              'いきなり大きな改善提案をしない',
+              'まず5分短縮',
+              'まず1業務だけ改善',
+              'まずテンプレ1つ作る'
+            ]
+          },
+          {
+            label: 'ポイント',
+            bullets: [
+              '小さい成果の積み重ねが信頼につながる',
+              '信頼が増えると相談の幅も広がる'
+            ]
+          }
+        ],
+        quote: '最初から大きく変える必要はありません。まずは「これ、助かりました」が1つ生まれることを優先します。',
+        notes: [
+          '抽象論で終わらないよう、「5分短縮」「テンプレ1つ」のように小ささを具体化します。',
+          '成果の大きさより、相手が体感できる変化を早く出すことが継続支援には効きます。',
+          'この一枚は、提案を大きくしすぎて動けなくなる参加者への安心材料にもなります。'
+        ],
+        qa: [
+          { q: '小さい改善だとインパクトが弱く見えませんか？', a: '最初はむしろ小さい方が試しやすく、成功体験から次の大きな相談につながります。' }
+        ],
+        footer: '信頼は、大きな一発ではなく小さな成功の連続で積み上がります。'
+      },
+      {
+        kicker: '15-22 min',
+        title: '稼働時間が余る時にやっていること',
+        chapter: '余った時間の使い方',
+        subtitle: '「余った時間」ではなく「次の提案準備時間」と考えると、支援の質が変わります。',
+        sections: [
+          {
+            label: '実際にやっていること',
+            bullets: [
+              '顧客業界の情報収集',
+              '他社事例の調査',
+              '業務フロー整理',
+              'GPTs試作',
+              'Dify簡易構築',
+              'プロンプトテンプレ整備',
+              'マニュアル化',
+              '定例会で話すネタ整理',
+              '課題仮説の洗い出し'
+            ]
+          },
+          {
+            label: '伝えたいポイント',
+            bullets: [
+              '稼働時間を「消化」ではなく「投資」として使う',
+              '提案準備をしておくことで次の相談につながる'
+            ]
+          }
+        ],
+        notes: [
+          'このパートでは「空いた時間に何をしているか」より、「なぜそれが次の相談につながるか」をセットで話します。',
+          '業界理解や仮説整理は、次回の定例で自然に提案できる材料になると伝えます。',
+          '具体例を1つ添えると、参加者が自分の案件に置き換えやすくなります。'
+        ],
+        qa: [
+          { q: '余った時間をどう正当化していますか？', a: '提案準備や仮説整理は、支援の質を上げるための投資時間として位置づけています。' },
+          { q: '何から手をつけるのがおすすめですか？', a: 'まずは業界情報の収集か、定例で話せる仮説メモづくりから始めやすいです。' }
+        ],
+        footer: '相談が生まれる前に準備しておくことが、継続支援の土台になります。'
+      },
+      {
+        kicker: '22-27 min',
+        title: '実際に継続につながった事例紹介',
+        chapter: '継続につながった事例',
+        subtitle: '最初から大きい相談は来ません。小さい入口から信頼が積み上がって広がります。',
+        splitCards: [
+          {
+            title: '事例 1',
+            body: '最初の相談は ChatGPT の使い方。そこから議事録作成、提案書作成、社内共有GPT、業務テンプレ化へ展開。'
+          },
+          {
+            title: '事例 2',
+            body: '最初の相談は SNS 投稿作成。そこから競合分析、記事作成、営業資料作成、業務改善相談へ広がった。'
+          }
+        ],
+        sections: [
+          {
+            label: '事例の見方',
+            bullets: [
+              '最初の相談内容',
+              '当時見えていた課題',
+              '実際に提案したこと',
+              'その後どのように広がったか'
+            ]
+          }
+        ],
+        notes: [
+          '事例紹介は成功自慢ではなく、「どう広がったかの構造」を見せる場として話すと伝わりやすいです。',
+          '最初の相談が小さいほど、参加者も再現イメージを持ちやすくなります。',
+          '可能なら、最初の一言や最初の改善内容を具体的に添えると臨場感が出ます。'
+        ],
+        qa: [
+          { q: '大きい提案が最初から来ないと不安です', a: 'むしろ自然です。小さい相談を丁寧に扱うことが次の広がりにつながります。' }
+        ],
+        footer: '「相談しやすい人」になることが、結果的に支援範囲を広げます。'
+      },
+      {
+        kicker: '22-27 min',
+        title: '事例から見える共通点',
+        chapter: '継続につながった事例',
+        subtitle: '継続支援につながった案件には、共通していた見方があります。',
+        sections: [
+          {
+            label: '共通点',
+            bullets: [
+              '最初から大きな相談は来ない',
+              '小さい支援から信頼が積み上がる',
+              'AIの話だけで終わらず、業務全体に視点を広げている',
+              '相手にとって「相談しやすい人」になっている'
+            ]
+          }
+        ],
+        quote: '入口は小さく、関係は深く。信頼が積み上がると、AI以外の相談も自然に増えていきます。',
+        notes: [
+          'このスライドは事例のまとめとして、参加者に再現ポイントを持ち帰ってもらう位置づけです。',
+          '「うまくいった案件」ではなく「なぜ広がったのか」を言葉にして締めると、次の Q&A に入りやすくなります。'
+        ],
+        qa: [
+          { q: '相談しやすい人になるには何が必要ですか？', a: '答えの速さだけでなく、相手の業務を理解しようとする姿勢と、小さな改善の積み重ねが効きます。' }
+        ],
+        footer: '事例の本質は、AIスキルそのものよりも顧客理解と信頼形成にあります。'
+      },
+      {
+        kicker: '27-30 min',
+        title: 'Q&A・締め',
+        chapter: 'Q&A・締め',
+        subtitle: '参加者の現場に引きつけて答えながら、最後にメッセージを回収します。',
+        sections: [
+          {
+            label: 'Q&A の進め方',
+            bullets: [
+              '参加者からの質問を受ける',
+              '実際の現場で困っていることへの回答を返す',
+              '正解を断言するより、自分なりの考え方を共有する'
+            ]
+          },
+          {
+            label: '最後に伝えたいメッセージ',
+            bullets: [
+              'AIバードは AI を教える人ではなく、顧客の業務を一緒に改善する伴走者',
+              'AI知識だけではなく、顧客理解が重要',
+              '小さい改善の積み重ねが信頼につながる',
+              '相手の業務に興味を持つことが継続支援につながる'
+            ]
+          }
+        ],
+        notes: [
+          '最後は情報を足すより、ここまでのメッセージをきれいに回収する意識でまとめます。',
+          'Q&A では個別論に入りすぎず、参加者全体に役立つ観点に言い換えて返すと締まりやすいです。',
+          '「今日からできる一歩は何か」を最後に一言置くと、行動につながりやすくなります。'
+        ],
+        qa: [
+          { q: 'すぐに試せることを一つ挙げるなら？', a: '次の顧客との会話で、AIツールの説明より先に「今どこで困っていますか？」と聞いてみることです。' },
+          { q: '質問が出ない場合はどうしますか？', a: 'よくある相談例をこちらから1つ出して、参加者が話しやすい空気を作ると進めやすいです。' }
+        ],
+        footer: '最後は「伴走者としてどう向き合うか」というスタンスで締めます。'
+      }
+    ];
+
+    const slideRoot = document.getElementById('slideRoot');
+    const tocList = document.getElementById('tocList');
+    const tocCounter = document.getElementById('tocCounter');
+    const slideCount = document.getElementById('slideCount');
+    const chapterLabel = document.getElementById('chapterLabel');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    let currentIndex = clampIndex(readHashIndex());
+
+    function readHashIndex() {
+      const raw = window.location.hash.replace('#slide-', '');
+      const parsed = Number(raw);
+      if (!Number.isFinite(parsed)) {
+        return 0;
+      }
+      return parsed - 1;
+    }
+
+    function clampIndex(index) {
+      return Math.max(0, Math.min(slides.length - 1, Number(index) || 0));
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderBullets(items, className) {
+      if (!items || !items.length) {
+        return '';
+      }
+      return '<ul class="' + className + '">' + items.map((item) => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>';
+    }
+
+    function renderSections(sections) {
+      if (!sections || !sections.length) {
+        return '';
+      }
+      return sections.map((section) => {
+        return [
+          '<section class="section-block">',
+          '<div class="section-label">' + escapeHtml(section.label) + '</div>',
+          renderBullets(section.bullets, 'bullet-list' + (section.bullets.length > 5 ? ' tight' : '')),
+          '</section>'
+        ].join('');
+      }).join('');
+    }
+
+    function renderTimeline(items) {
+      if (!items || !items.length) {
+        return '';
+      }
+      return '<div class="timeline">' + items.map((item) => {
+        return [
+          '<div class="timeline-item">',
+          '<div class="timeline-time">' + escapeHtml(item.time) + '</div>',
+          '<div class="timeline-copy">',
+          '<strong>' + escapeHtml(item.title) + '</strong>',
+          '<span>' + escapeHtml(item.body) + '</span>',
+          '</div>',
+          '</div>'
+        ].join('');
+      }).join('') + '</div>';
+    }
+
+    function renderSplitCards(items) {
+      if (!items || !items.length) {
+        return '';
+      }
+      return '<div class="split-grid">' + items.map((item) => {
+        return [
+          '<article class="mini-card">',
+          '<h3>' + escapeHtml(item.title) + '</h3>',
+          '<p>' + escapeHtml(item.body) + '</p>',
+          '</article>'
+        ].join('');
+      }).join('') + '</div>';
+    }
+
+    function renderChips(items) {
+      if (!items || !items.length) {
+        return '';
+      }
+      return '<div class="chips">' + items.map((item) => '<div class="chip">' + escapeHtml(item) + '</div>').join('') + '</div>';
+    }
+
+    function renderNotes(items) {
+      return [
+        '<aside class="note-panel">',
+        '<h2 class="panel-title">台本メモ <span>Speaker Notes</span></h2>',
+        renderBullets(items || [], 'note-list' + ((items || []).length > 3 ? ' tight' : '')),
+        '</aside>'
+      ].join('');
+    }
+
+    function renderQa(items) {
+      if (!items || !items.length) {
+        return '';
+      }
+      return [
+        '<aside class="qa-panel">',
+        '<h2 class="panel-title">想定 Q&A <span>Quick Answers</span></h2>',
+        '<ul class="qa-list tight">',
+        items.map((item) => '<li><strong>Q.</strong> ' + escapeHtml(item.q) + '<br><strong>A.</strong> ' + escapeHtml(item.a) + '</li>').join(''),
+        '</ul>',
+        '</aside>'
+      ].join('');
+    }
+
+    function renderSlide(index) {
+      const slide = slides[index];
+      const progress = ((index + 1) / slides.length) * 100;
+      const leftColumn = [
+        slide.lead ? '<p class="lead">' + escapeHtml(slide.lead) + '</p>' : '',
+        renderTimeline(slide.timeline),
+        renderSplitCards(slide.splitCards),
+        renderSections(slide.sections),
+        slide.quote ? '<div class="quote-box">' + escapeHtml(slide.quote) + '</div>' : '',
+        renderChips(slide.chips)
+      ].join('');
+
+      const sidePanels = [renderNotes(slide.notes)];
+      if (slide.qa && slide.qa.length) {
+        sidePanels.push(renderQa(slide.qa));
+      }
+
+      slideRoot.classList.remove('enter');
+      void slideRoot.offsetWidth;
+      slideRoot.classList.add('enter');
+
+      slideRoot.innerHTML = [
+        '<div class="slide-header">',
+        '<div class="slide-kicker">' + escapeHtml(slide.kicker) + '</div>',
+        '<h1 class="slide-title">' + escapeHtml(slide.title) + '</h1>',
+        '<div class="slide-subtitle">' + escapeHtml(slide.subtitle) + '</div>',
+        '</div>',
+        '<div class="slide-main">',
+        '<section class="stack' + ((slide.sections && slide.sections.length > 1) || slide.timeline || slide.splitCards ? '' : ' compact') + '">',
+        leftColumn,
+        '</section>',
+        '<div style="display:grid; gap:16px; align-content:start;">' + sidePanels.join('') + '</div>',
+        '</div>',
+        '<div class="slide-footer">',
+        '<div class="footer-note">' + escapeHtml(slide.footer || '') + '</div>',
+        '<div class="progress">',
+        '<div class="progress-bar" aria-hidden="true"><div class="progress-fill" style="width:' + progress + '%"></div></div>',
+        '<div class="progress-copy">' + escapeHtml(slide.chapter) + '</div>',
+        '</div>',
+        '</div>'
+      ].join('');
+
+      slideCount.textContent = 'Slide ' + (index + 1) + ' / ' + slides.length;
+      tocCounter.textContent = (index + 1) + ' / ' + slides.length;
+      chapterLabel.textContent = slide.chapter;
+      prevButton.disabled = index === 0;
+      nextButton.disabled = index === slides.length - 1;
+
+      window.location.hash = 'slide-' + (index + 1);
+
+      Array.prototype.forEach.call(tocList.querySelectorAll('.toc-item'), (button, buttonIndex) => {
+        const isActive = buttonIndex === index;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    }
+
+    function goTo(index) {
+      const nextIndex = clampIndex(index);
+      if (nextIndex === currentIndex) {
+        renderSlide(currentIndex);
+        return;
+      }
+      currentIndex = nextIndex;
+      renderSlide(currentIndex);
+    }
+
+    function buildToc() {
+      tocList.innerHTML = slides.map((slide, index) => {
+        return [
+          '<button class="toc-item" type="button" role="tab" aria-selected="false" data-index="' + index + '">',
+          '<small>' + escapeHtml(slide.kicker) + '</small>',
+          '<span>' + escapeHtml(slide.title) + '</span>',
+          '</button>'
+        ].join('');
+      }).join('');
+
+      tocList.addEventListener('click', (event) => {
+        const trigger = event.target.closest('.toc-item');
+        if (!trigger) {
+          return;
+        }
+        goTo(Number(trigger.dataset.index));
+      });
+    }
+
+    prevButton.addEventListener('click', () => goTo(currentIndex - 1));
+    nextButton.addEventListener('click', () => goTo(currentIndex + 1));
+
+    slideRoot.addEventListener('click', (event) => {
+      if (event.target.closest('button')) {
+        return;
+      }
+      const bounds = slideRoot.getBoundingClientRect();
+      const clickedLeft = event.clientX - bounds.left < bounds.width / 2;
+      goTo(currentIndex + (clickedLeft ? -1 : 1));
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        goTo(currentIndex + 1);
+      }
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+        event.preventDefault();
+        goTo(currentIndex - 1);
+      }
+      if (event.key === 'Home') {
+        event.preventDefault();
+        goTo(0);
+      }
+      if (event.key === 'End') {
+        event.preventDefault();
+        goTo(slides.length - 1);
+      }
+    }, { passive: false });
+
+    window.addEventListener('hashchange', () => {
+      const hashIndex = clampIndex(readHashIndex());
+      if (hashIndex !== currentIndex) {
+        currentIndex = hashIndex;
+        renderSlide(currentIndex);
+      }
+    });
+
+    buildToc();
+    renderSlide(currentIndex);
+  </script>
+</body>
+</html>
