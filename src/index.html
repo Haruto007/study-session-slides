@@ -7,21 +7,21 @@
   <title>AIバード勉強会</title>
   <style>
     :root {
-      --bg-1: #fff6ef;
-      --bg-2: #fffdf9;
-      --bg-3: #ffe0d2;
-      --panel: rgba(255, 255, 255, 0.78);
+      --bg-1: #fff8f2;
+      --bg-2: #fff3ea;
+      --bg-3: #ffd8c5;
+      --ink: #392722;
+      --muted: #7b645b;
+      --line: rgba(110, 76, 61, 0.14);
+      --panel: rgba(255, 255, 255, 0.72);
       --panel-strong: rgba(255, 255, 255, 0.92);
-      --text: #3f2c28;
-      --muted: #7d675f;
-      --line: rgba(126, 91, 75, 0.16);
-      --accent: #db7a55;
-      --accent-strong: #bc5c3a;
-      --accent-soft: #ffe7da;
-      --shadow: 0 26px 60px rgba(149, 91, 65, 0.16);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
+      --accent: #dd7a52;
+      --accent-strong: #b45535;
+      --accent-soft: rgba(255, 231, 219, 0.78);
+      --shadow: 0 28px 70px rgba(144, 86, 58, 0.14);
+      --radius-xl: 32px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
       --font-display: "Avenir Next", "Hiragino Sans", "Yu Gothic", sans-serif;
       --font-body: "Hiragino Sans", "Yu Gothic", sans-serif;
     }
@@ -38,12 +38,13 @@
 
     body {
       overflow: hidden;
-      color: var(--text);
+      color: var(--ink);
       font-family: var(--font-body);
       background:
-        radial-gradient(circle at top left, rgba(255, 223, 203, 0.95), transparent 34%),
-        radial-gradient(circle at top right, rgba(255, 237, 225, 0.92), transparent 26%),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, #fff7f1);
+        radial-gradient(circle at 12% 15%, rgba(255, 219, 198, 0.92), transparent 22%),
+        radial-gradient(circle at 86% 16%, rgba(255, 235, 222, 0.8), transparent 20%),
+        radial-gradient(circle at 70% 84%, rgba(233, 165, 126, 0.15), transparent 24%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, #fffaf5);
     }
 
     button {
@@ -52,249 +53,116 @@
       cursor: pointer;
     }
 
-    .app-shell {
-      position: relative;
-      min-height: 100vh;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      gap: 20px;
-    }
-
     .ambient {
       position: fixed;
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 15% 20%, rgba(255, 212, 190, 0.45), transparent 16%),
-        radial-gradient(circle at 82% 18%, rgba(255, 230, 210, 0.4), transparent 18%),
-        radial-gradient(circle at 72% 84%, rgba(239, 158, 116, 0.16), transparent 20%);
+        linear-gradient(90deg, rgba(255, 255, 255, 0.12), transparent 26%, transparent 74%, rgba(255, 255, 255, 0.12)),
+        radial-gradient(circle at 0 100%, rgba(255, 255, 255, 0.3), transparent 26%);
     }
 
-    .sidebar,
-    .stage {
+    .app {
       position: relative;
       z-index: 1;
-    }
-
-    .sidebar {
-      display: flex;
-      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
       gap: 16px;
     }
 
-    .card {
+    .glass {
       background: var(--panel);
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
-    }
-
-    .brand {
-      padding: 24px 22px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent-strong);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .brand h1 {
-      margin: 18px 0 12px;
-      font-family: var(--font-display);
-      font-size: 30px;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-    }
-
-    .brand p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .toc {
-      padding: 16px;
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .toc-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 4px 6px 0;
-    }
-
-    .toc-header strong {
-      font-size: 15px;
-    }
-
-    .toc-header span {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .toc-list {
-      display: grid;
-      gap: 8px;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .toc-item {
-      width: 100%;
-      padding: 14px;
-      text-align: left;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.56);
-      color: var(--text);
-      border: 1px solid transparent;
-      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
-    }
-
-    .toc-item:hover,
-    .toc-item:focus-visible {
-      transform: translateY(-1px);
-      border-color: rgba(219, 122, 85, 0.28);
-      background: rgba(255, 255, 255, 0.82);
-      outline: none;
-    }
-
-    .toc-item.active {
-      background: linear-gradient(135deg, rgba(219, 122, 85, 0.18), rgba(255, 255, 255, 0.96));
-      border-color: rgba(219, 122, 85, 0.3);
-    }
-
-    .toc-item small,
-    .toc-item span {
-      display: block;
-    }
-
-    .toc-item small {
-      margin-bottom: 5px;
-      color: var(--accent-strong);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .toc-item span {
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.45;
-    }
-
-    .sidebar-footer {
-      padding: 0 6px 4px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .stage {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 10px 14px;
+      gap: 16px;
+      padding: 14px 18px;
+      border-radius: 999px;
     }
 
-    .meta {
+    .brand {
+      min-width: 0;
       display: flex;
       align-items: center;
-      gap: 12px;
-      min-width: 0;
+      gap: 14px;
     }
 
-    .pill {
-      padding: 7px 12px;
+    .brand-mark {
+      padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.76);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       white-space: nowrap;
     }
 
-    .chapter {
+    .brand-copy {
       min-width: 0;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 600;
+    }
+
+    .brand-copy strong,
+    .brand-copy span {
+      display: block;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .brand-copy strong {
+      font-size: 16px;
+    }
+
+    .brand-copy span {
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .controls {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
-    .toggle-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .counter {
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .nav-button {
-      min-width: 92px;
+      min-width: 94px;
       min-height: 44px;
       padding: 0 18px;
       border-radius: 999px;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
       color: #fff;
-      font-weight: 700;
-      box-shadow: 0 12px 24px rgba(188, 92, 58, 0.22);
+      font-weight: 800;
+      box-shadow: 0 14px 24px rgba(180, 85, 53, 0.2);
       transition: transform 140ms ease, opacity 140ms ease;
     }
 
     .nav-button.secondary {
-      background: rgba(255, 255, 255, 0.86);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--ink);
       box-shadow: none;
       border: 1px solid var(--line);
-    }
-
-    .nav-button.ghost {
-      min-width: 0;
-      padding: 0 14px;
-      background: rgba(255, 255, 255, 0.72);
-      color: var(--muted);
-      box-shadow: none;
-      border: 1px solid var(--line);
-    }
-
-    .nav-button.ghost.active {
-      background: rgba(255, 231, 218, 0.95);
-      color: var(--accent-strong);
-      border-color: rgba(219, 122, 85, 0.28);
     }
 
     .nav-button:hover,
@@ -309,21 +177,40 @@
       transform: none;
     }
 
-    .slide-wrap {
-      flex: 1;
+    .stage {
       min-height: 0;
+      display: grid;
+      align-items: stretch;
+    }
+
+    .viewport {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+    }
+
+    .track {
+      height: 100%;
       display: flex;
+      transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
     }
 
     .slide {
       position: relative;
-      width: 100%;
-      min-height: calc(100vh - 108px);
-      padding: 34px;
+      flex: 0 0 100%;
+      min-width: 100%;
+      min-height: 100%;
+      padding: 40px 44px 34px;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      gap: 26px;
+      gap: 28px;
       overflow: hidden;
+      border-radius: var(--radius-xl);
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
     }
 
     .slide::before,
@@ -335,38 +222,23 @@
     }
 
     .slide::before {
-      width: 280px;
-      height: 280px;
-      top: -110px;
-      right: -70px;
-      background: radial-gradient(circle, rgba(255, 216, 197, 0.68), rgba(255, 216, 197, 0));
+      width: 320px;
+      height: 320px;
+      top: -120px;
+      right: -80px;
+      background: radial-gradient(circle, rgba(255, 215, 192, 0.72), rgba(255, 215, 192, 0));
     }
 
     .slide::after {
-      width: 220px;
-      height: 220px;
+      width: 240px;
+      height: 240px;
       bottom: -120px;
-      left: -80px;
-      background: radial-gradient(circle, rgba(255, 236, 222, 0.96), rgba(255, 236, 222, 0));
-    }
-
-    .slide.enter {
-      animation: slide-in 360ms ease;
-    }
-
-    @keyframes slide-in {
-      from {
-        opacity: 0;
-        transform: translateY(18px) scale(0.988);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      left: -90px;
+      background: radial-gradient(circle, rgba(255, 239, 228, 0.96), rgba(255, 239, 228, 0));
     }
 
     .slide-header,
-    .slide-main,
+    .slide-body,
     .slide-footer {
       position: relative;
       z-index: 1;
@@ -377,73 +249,71 @@
       gap: 12px;
     }
 
-    .slide-kicker {
+    .kicker {
       color: var(--accent-strong);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
-    .slide-title {
+    .title {
       margin: 0;
       max-width: 980px;
       font-family: var(--font-display);
-      font-size: clamp(34px, 4.5vw, 60px);
-      line-height: 1.08;
-      letter-spacing: -0.04em;
+      font-size: clamp(34px, 4.6vw, 64px);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
     }
 
-    .slide-subtitle {
+    .subtitle {
       max-width: 860px;
       color: var(--muted);
       font-size: clamp(16px, 2vw, 20px);
-      line-height: 1.7;
+      line-height: 1.72;
     }
 
-    .slide-main {
+    .slide-body {
       min-height: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.9fr);
-      gap: 24px;
-      align-items: stretch;
-    }
-
-    .slide-main.single-column {
-      grid-template-columns: 1fr;
-    }
-
-    .stack,
-    .note-panel,
-    .qa-panel {
-      min-height: 0;
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--line);
-      background: var(--panel-strong);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+      align-content: start;
+      gap: 18px;
     }
 
     .stack {
-      padding: 24px;
       display: grid;
       gap: 18px;
       align-content: start;
-    }
-
-    .stack.compact {
-      gap: 12px;
+      min-height: 0;
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
     }
 
     .lead {
       margin: 0;
       font-size: 18px;
-      line-height: 1.8;
-      color: var(--text);
+      line-height: 1.86;
     }
 
-    .section-block {
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .section {
       display: grid;
       gap: 10px;
+      padding: 18px 18px 16px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 248, 244, 0.92);
+      border: 1px solid rgba(180, 85, 53, 0.12);
+    }
+
+    .section.full {
+      grid-column: 1 / -1;
     }
 
     .section-label {
@@ -454,111 +324,18 @@
       text-transform: uppercase;
     }
 
-    .section-title {
-      margin: 0;
-      font-size: 20px;
-      line-height: 1.4;
-    }
-
-    .bullet-list,
-    .note-list,
-    .qa-list {
+    .bullet-list {
       margin: 0;
       padding-left: 1.2em;
       display: grid;
       gap: 10px;
-      color: var(--text);
       font-size: 18px;
-      line-height: 1.75;
+      line-height: 1.72;
     }
 
-    .bullet-list.tight,
-    .note-list.tight,
-    .qa-list.tight {
+    .bullet-list.tight {
       gap: 8px;
       font-size: 16px;
-    }
-
-    .bullet-list strong,
-    .note-list strong,
-    .qa-list strong {
-      color: var(--accent-strong);
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .chip {
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent-strong);
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.3;
-    }
-
-    .split-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .mini-card {
-      padding: 18px;
-      border-radius: var(--radius-lg);
-      background: rgba(255, 244, 238, 0.9);
-      border: 1px solid rgba(219, 122, 85, 0.14);
-    }
-
-    .mini-card h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
-
-    .mini-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    .note-panel,
-    .qa-panel {
-      padding: 22px 20px;
-      display: grid;
-      align-content: start;
-      gap: 16px;
-    }
-
-    .panel-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 0;
-      font-size: 16px;
-    }
-
-    .panel-title span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .quote-box {
-      padding: 20px;
-      border-radius: var(--radius-lg);
-      background: linear-gradient(135deg, rgba(255, 236, 226, 0.92), rgba(255, 250, 246, 0.96));
-      border: 1px solid rgba(219, 122, 85, 0.18);
-      font-size: 18px;
-      line-height: 1.8;
-      font-weight: 700;
     }
 
     .timeline {
@@ -568,23 +345,23 @@
 
     .timeline-item {
       display: grid;
-      grid-template-columns: 92px 1fr;
+      grid-template-columns: 94px 1fr;
       gap: 14px;
       align-items: start;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 248, 244, 0.92);
+      border: 1px solid rgba(180, 85, 53, 0.12);
     }
 
     .timeline-time {
       padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(255, 232, 220, 0.92);
+      border-radius: 14px;
+      background: var(--accent-soft);
       color: var(--accent-strong);
       font-size: 13px;
       font-weight: 800;
       text-align: center;
-    }
-
-    .timeline-copy {
-      padding-top: 4px;
     }
 
     .timeline-copy strong,
@@ -593,21 +370,71 @@
     }
 
     .timeline-copy strong {
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       font-size: 16px;
     }
 
     .timeline-copy span {
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.65;
+    }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, rgba(255, 246, 240, 0.98), rgba(255, 255, 255, 0.95));
+      border: 1px solid rgba(180, 85, 53, 0.12);
+    }
+
+    .mini-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .mini-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 11px 14px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .quote-box {
+      padding: 20px 22px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(255, 238, 228, 0.94), rgba(255, 250, 246, 0.98));
+      border: 1px solid rgba(180, 85, 53, 0.16);
+      font-size: 20px;
+      line-height: 1.8;
+      font-weight: 700;
     }
 
     .slide-footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      gap: 16px;
+      gap: 18px;
     }
 
     .footer-note {
@@ -628,207 +455,252 @@
       width: 180px;
       height: 8px;
       border-radius: 999px;
-      background: rgba(219, 122, 85, 0.12);
+      background: rgba(221, 122, 82, 0.12);
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
-      border-radius: inherit;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      transition: width 180ms ease;
+      transition: width 240ms ease;
     }
 
     .progress-copy {
       color: var(--muted);
       font-size: 13px;
+      font-weight: 800;
+    }
+
+    .filmstrip {
+      display: grid;
+      gap: 10px;
+      padding: 12px 14px 14px;
+      border-radius: 26px;
+    }
+
+    .filmstrip-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 2px 4px 0;
+    }
+
+    .filmstrip-head strong {
+      font-size: 14px;
+    }
+
+    .filmstrip-head span {
+      color: var(--muted);
+      font-size: 12px;
       font-weight: 700;
     }
 
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
+    .toc-list {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 2px 2px 4px;
+      scroll-snap-type: x proximity;
     }
 
-    @media (max-width: 1080px) {
+    .toc-list::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .toc-list::-webkit-scrollbar-thumb {
+      background: rgba(180, 85, 53, 0.18);
+      border-radius: 999px;
+    }
+
+    .toc-item {
+      flex: 0 0 196px;
+      min-height: 90px;
+      padding: 14px;
+      text-align: left;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid transparent;
+      scroll-snap-align: start;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .toc-item:hover,
+    .toc-item:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(221, 122, 82, 0.28);
+      outline: none;
+    }
+
+    .toc-item.active {
+      background: linear-gradient(145deg, rgba(255, 231, 219, 0.92), rgba(255, 255, 255, 0.98));
+      border-color: rgba(221, 122, 82, 0.32);
+    }
+
+    .toc-item small,
+    .toc-item span {
+      display: block;
+    }
+
+    .toc-item small {
+      margin-bottom: 8px;
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .toc-item span {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 960px) {
       body {
         overflow: auto;
       }
 
-      .app-shell {
-        min-height: auto;
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        order: 2;
-      }
-
-      .stage {
-        order: 1;
-      }
-
-      .slide {
+      .app {
         min-height: auto;
       }
 
-      .slide-main {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .app-shell {
-        padding: 12px;
-        gap: 12px;
+      .viewport {
+        overflow: visible;
       }
 
-      .brand {
-        padding: 20px 18px;
-      }
-
-      .brand h1 {
-        font-size: 26px;
-      }
-
-      .toc {
-        padding: 14px;
-      }
-
-      .topbar {
-        flex-wrap: wrap;
-        padding: 12px;
-      }
-
-      .controls {
-        width: 100%;
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
-
-      .nav-button {
-        min-width: 0;
-      }
-
-      .toggle-group,
-      .nav-pager {
-        width: 100%;
-      }
-
-      .toggle-group {
-        order: 1;
-      }
-
-      .nav-pager {
-        order: 2;
+      .track {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .nav-pager .nav-button {
-        width: 100%;
+        gap: 14px;
+        transform: none !important;
       }
 
       .slide {
-        padding: 22px 18px;
-        gap: 18px;
+        min-height: auto;
+        padding: 28px 22px 24px;
       }
 
-      .slide-subtitle,
-      .lead,
-      .bullet-list,
-      .note-list,
-      .qa-list {
-        font-size: 15px;
-        line-height: 1.7;
-      }
-
-      .stack,
-      .note-panel,
-      .qa-panel {
-        padding: 18px 16px;
-        border-radius: 22px;
-      }
-
+      .section-grid,
       .split-grid {
         grid-template-columns: 1fr;
-      }
-
-      .timeline-item {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-
-      .progress {
-        min-width: 0;
-        width: 100%;
-        justify-items: start;
-      }
-
-      .progress-bar {
-        width: 100%;
       }
 
       .slide-footer {
         flex-direction: column;
         align-items: stretch;
       }
+
+      .progress {
+        width: 100%;
+        min-width: 0;
+        justify-items: start;
+      }
+
+      .progress-bar {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+        border-radius: 28px;
+      }
+
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .counter {
+        order: 1;
+      }
+
+      .nav-button {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .brand {
+        width: 100%;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .brand-copy strong,
+      .brand-copy span {
+        white-space: normal;
+      }
+
+      .slide {
+        padding: 24px 18px 22px;
+        gap: 20px;
+      }
+
+      .subtitle,
+      .lead,
+      .bullet-list {
+        font-size: 15px;
+        line-height: 1.72;
+      }
+
+      .stack,
+      .section,
+      .mini-card,
+      .timeline-item,
+      .quote-box {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+
+      .toc-item {
+        flex-basis: 168px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="ambient"></div>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <section class="brand card">
-        <div class="eyebrow">AI Bird Study Session</div>
-        <h1>顧客との関係構築から、継続支援・追加相談につなげる実践ノウハウ共有</h1>
-        <p>AIを教える人ではなく、顧客の業務を一緒に改善する伴走者として、再現可能な現場の工夫を共有する30分です。</p>
-      </section>
-
-      <section class="toc card">
-        <div class="toc-header">
-          <strong>目次</strong>
-          <span id="tocCounter">1 / 10</span>
+  <div class="app">
+    <header class="topbar glass">
+      <div class="brand">
+        <div class="brand-mark">AI Bird Study Session</div>
+        <div class="brand-copy">
+          <strong>顧客との関係構築から、継続支援・追加相談につなげる実践ノウハウ共有</strong>
+          <span id="chapterLabel">タイトル</span>
         </div>
-        <div id="tocList" class="toc-list" role="tablist" aria-label="スライド一覧"></div>
-      </section>
-
-      <div class="sidebar-footer">
-        左右キー、画面クリック、または下のボタンで移動できます。<br>
-        URL ハッシュに現在位置を保持するので、再読込しても同じスライドから再開できます。
       </div>
-    </aside>
+      <div class="controls">
+        <div id="slideCount" class="counter">Slide 1 / 10</div>
+        <button id="prevButton" class="nav-button secondary" type="button" aria-label="前のスライド">前へ</button>
+        <button id="nextButton" class="nav-button" type="button" aria-label="次のスライド">次へ</button>
+      </div>
+    </header>
 
     <main class="stage">
-      <header class="topbar card">
-        <div class="meta">
-          <div class="pill" id="slideCount">Slide 1 / 10</div>
-          <div class="chapter" id="chapterLabel">タイトル</div>
-        </div>
-        <div class="controls">
-          <div class="toggle-group">
-            <button id="notesToggle" class="nav-button ghost" type="button" aria-pressed="false">台本メモ</button>
-            <button id="qaToggle" class="nav-button ghost" type="button" aria-pressed="false">Q&A</button>
-          </div>
-          <div class="nav-pager">
-            <button id="prevButton" class="nav-button secondary" type="button" aria-label="前のスライド">前へ</button>
-            <button id="nextButton" class="nav-button" type="button" aria-label="次のスライド">次へ</button>
-          </div>
-        </div>
-      </header>
-
-      <div class="slide-wrap">
-        <article id="slideRoot" class="slide card" aria-live="polite"></article>
-      </div>
+      <section class="viewport glass" aria-label="プレゼンテーション">
+        <div id="slideTrack" class="track"></div>
+      </section>
     </main>
+
+    <footer class="filmstrip glass">
+      <div class="filmstrip-head">
+        <strong>Slides</strong>
+        <span id="tocCounter">1 / 10</span>
+      </div>
+      <div id="tocList" class="toc-list" role="tablist" aria-label="スライド一覧"></div>
+    </footer>
   </div>
 
   <script>
@@ -846,15 +718,6 @@
           { time: '15-22分', title: '余った時間の使い方', body: '提案準備としての投資時間' },
           { time: '22-27分', title: '継続につながった事例', body: '小さい支援から広がった実例' },
           { time: '27-30分', title: 'Q&A・締め', body: '現場の悩みに答えながら締める' }
-        ],
-        notes: [
-          '冒頭で「営業ノウハウ」ではなく「現場で意識している再現可能な工夫」と定義すると、参加者が受け取りやすいです。',
-          '30分で全部を深く話すより、明日から真似できる観点を3つ持ち帰ってもらう空気づくりを意識します。',
-          '肩肘張らず、実際の現場で感じたことを共有する会として温度感を整えます。'
-        ],
-        qa: [
-          { q: '営業が得意ではなくても再現できますか？', a: 'はい。今回の軸は営業トークではなく、顧客の業務理解と小さな改善の積み重ねです。' },
-          { q: 'AIの専門知識が浅くても大丈夫ですか？', a: '最初から全部知っている必要はありません。まずは課題を理解し、一緒に整理できることが大切です。' }
         ],
         footer: '今日のキーワードは「顧客理解」「小さい成功体験」「相談しやすい人」です。'
       },
@@ -882,14 +745,6 @@
             ]
           }
         ],
-        notes: [
-          '実績を盛るよりも「自分も試行錯誤してきた」という等身大の話し方に寄せると、参加者が自分事化しやすくなります。',
-          '顧客との距離感や担当領域を一言で伝えておくと、その後の事例にも納得感が出ます。',
-          '「今日は正解を教える場ではなく、現場の工夫を持ち帰る場です」と置いておくと空気が柔らかくなります。'
-        ],
-        qa: [
-          { q: '自己紹介でどこまで話すべきですか？', a: '長くしすぎず、今回のテーマと関係する経験に絞るのが伝わりやすいです。' }
-        ],
         footer: '最初の3分で、参加者に「これは自分にもできそう」と思ってもらうのが狙いです。'
       },
       {
@@ -915,15 +770,6 @@
           'SNS投稿が継続できない',
           '社内共有がうまくできていない',
           '情報整理が属人化している'
-        ],
-        notes: [
-          'ここでは「AIを入れましょう」ではなく、「どこで時間がかかっていますか？」と聞く姿勢を強調します。',
-          '月2時間契約でも、業務理解が進むと「実は他にも…」という相談が増えやすいことを実感ベースで伝えます。',
-          '参加者がすぐに使えるよう、質問例を具体的に言うのが効果的です。'
-        ],
-        qa: [
-          { q: '最初にAIの話を期待されている場合は？', a: '期待には応えつつ、すぐに業務の話へ橋渡しします。AIの説明だけで終わらないのが大事です。' },
-          { q: '業務理解に時間をかけすぎるのが不安です', a: '最初から完璧に把握する必要はありません。小さく聞いて、小さく仮説を返すだけでも十分です。' }
         ],
         footer: '「AIを売る」のではなく、「業務を理解してくれる人」になることが入口です。'
       },
@@ -960,14 +806,6 @@
             ]
           }
         ],
-        notes: [
-          'このパートでは「答える力」より「広げる力」のほうが継続支援につながることを伝えます。',
-          '質問は詰問にならないよう、興味を持って整理を手伝うトーンで話すのが大事です。',
-          '「その場で全部解決しなくても、次の相談の種が見つかれば十分」という考えも添えます。'
-        ],
-        qa: [
-          { q: '深掘りしすぎて嫌がられませんか？', a: '聞き方次第です。改善の糸口を一緒に探すスタンスなら、むしろ理解してくれている感につながりやすいです。' }
-        ],
         footer: '単発回答で終わらない問いが、次の相談を自然に生みます。'
       },
       {
@@ -991,14 +829,6 @@
               '顧客に「理解してくれている感」を持ってもらう'
             ]
           }
-        ],
-        notes: [
-          'ここは「提案」より「整理して返す」が主役です。言い切りすぎず、仮説として返すと受け入れられやすいです。',
-          '顧客が気づいていない課題を代わりに言葉にできると、相談相手としての信頼が一段上がります。',
-          'AIに寄せるより、業務全体を見ている人だと伝わるフレーズを意識して紹介します。'
-        ],
-        qa: [
-          { q: 'AI化を期待されているのに業務整理の話をしても大丈夫ですか？', a: 'むしろ効果が出る近道なら歓迎されやすいです。目的はAI導入ではなく業務改善だと共有します。' }
         ],
         footer: '「理解してくれている」と感じてもらえる一言が、次の会話を生みます。'
       },
@@ -1026,14 +856,6 @@
           }
         ],
         quote: '最初から大きく変える必要はありません。まずは「これ、助かりました」が1つ生まれることを優先します。',
-        notes: [
-          '抽象論で終わらないよう、「5分短縮」「テンプレ1つ」のように小ささを具体化します。',
-          '成果の大きさより、相手が体感できる変化を早く出すことが継続支援には効きます。',
-          'この一枚は、提案を大きくしすぎて動けなくなる参加者への安心材料にもなります。'
-        ],
-        qa: [
-          { q: '小さい改善だとインパクトが弱く見えませんか？', a: '最初はむしろ小さい方が試しやすく、成功体験から次の大きな相談につながります。' }
-        ],
         footer: '信頼は、大きな一発ではなく小さな成功の連続で積み上がります。'
       },
       {
@@ -1064,15 +886,6 @@
             ]
           }
         ],
-        notes: [
-          'このパートでは「空いた時間に何をしているか」より、「なぜそれが次の相談につながるか」をセットで話します。',
-          '業界理解や仮説整理は、次回の定例で自然に提案できる材料になると伝えます。',
-          '具体例を1つ添えると、参加者が自分の案件に置き換えやすくなります。'
-        ],
-        qa: [
-          { q: '余った時間をどう正当化していますか？', a: '提案準備や仮説整理は、支援の質を上げるための投資時間として位置づけています。' },
-          { q: '何から手をつけるのがおすすめですか？', a: 'まずは業界情報の収集か、定例で話せる仮説メモづくりから始めやすいです。' }
-        ],
         footer: '相談が生まれる前に準備しておくことが、継続支援の土台になります。'
       },
       {
@@ -1101,14 +914,6 @@
             ]
           }
         ],
-        notes: [
-          '事例紹介は成功自慢ではなく、「どう広がったかの構造」を見せる場として話すと伝わりやすいです。',
-          '最初の相談が小さいほど、参加者も再現イメージを持ちやすくなります。',
-          '可能なら、最初の一言や最初の改善内容を具体的に添えると臨場感が出ます。'
-        ],
-        qa: [
-          { q: '大きい提案が最初から来ないと不安です', a: 'むしろ自然です。小さい相談を丁寧に扱うことが次の広がりにつながります。' }
-        ],
         footer: '「相談しやすい人」になることが、結果的に支援範囲を広げます。'
       },
       {
@@ -1128,13 +933,6 @@
           }
         ],
         quote: '入口は小さく、関係は深く。信頼が積み上がると、AI以外の相談も自然に増えていきます。',
-        notes: [
-          'このスライドは事例のまとめとして、参加者に再現ポイントを持ち帰ってもらう位置づけです。',
-          '「うまくいった案件」ではなく「なぜ広がったのか」を言葉にして締めると、次の Q&A に入りやすくなります。'
-        ],
-        qa: [
-          { q: '相談しやすい人になるには何が必要ですか？', a: '答えの速さだけでなく、相手の業務を理解しようとする姿勢と、小さな改善の積み重ねが効きます。' }
-        ],
         footer: '事例の本質は、AIスキルそのものよりも顧客理解と信頼形成にあります。'
       },
       {
@@ -1161,32 +959,19 @@
             ]
           }
         ],
-        notes: [
-          '最後は情報を足すより、ここまでのメッセージをきれいに回収する意識でまとめます。',
-          'Q&A では個別論に入りすぎず、参加者全体に役立つ観点に言い換えて返すと締まりやすいです。',
-          '「今日からできる一歩は何か」を最後に一言置くと、行動につながりやすくなります。'
-        ],
-        qa: [
-          { q: 'すぐに試せることを一つ挙げるなら？', a: '次の顧客との会話で、AIツールの説明より先に「今どこで困っていますか？」と聞いてみることです。' },
-          { q: '質問が出ない場合はどうしますか？', a: 'よくある相談例をこちらから1つ出して、参加者が話しやすい空気を作ると進めやすいです。' }
-        ],
         footer: '最後は「伴走者としてどう向き合うか」というスタンスで締めます。'
       }
     ];
 
-    const slideRoot = document.getElementById('slideRoot');
+    const slideTrack = document.getElementById('slideTrack');
     const tocList = document.getElementById('tocList');
     const tocCounter = document.getElementById('tocCounter');
     const slideCount = document.getElementById('slideCount');
     const chapterLabel = document.getElementById('chapterLabel');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
-    const notesToggle = document.getElementById('notesToggle');
-    const qaToggle = document.getElementById('qaToggle');
 
     let currentIndex = clampIndex(readHashIndex());
-    let showNotes = !window.matchMedia('(max-width: 720px)').matches;
-    let showQa = !window.matchMedia('(max-width: 720px)').matches;
 
     function readHashIndex() {
       const raw = window.location.hash.replace('#slide-', '');
@@ -1221,14 +1006,19 @@
       if (!sections || !sections.length) {
         return '';
       }
-      return sections.map((section) => {
-        return [
-          '<section class="section-block">',
-          '<div class="section-label">' + escapeHtml(section.label) + '</div>',
-          renderBullets(section.bullets, 'bullet-list' + (section.bullets.length > 5 ? ' tight' : '')),
-          '</section>'
-        ].join('');
-      }).join('');
+      return [
+        '<div class="section-grid">',
+        sections.map((section, index) => {
+          const fullClass = sections.length === 1 || (sections.length % 2 === 1 && index === sections.length - 1) ? ' full' : '';
+          return [
+            '<section class="section' + fullClass + '">',
+            '<div class="section-label">' + escapeHtml(section.label) + '</div>',
+            renderBullets(section.bullets, 'bullet-list' + (section.bullets.length > 5 ? ' tight' : '')),
+            '</section>'
+          ].join('');
+        }).join(''),
+        '</div>'
+      ].join('');
     }
 
     function renderTimeline(items) {
@@ -1269,103 +1059,38 @@
       return '<div class="chips">' + items.map((item) => '<div class="chip">' + escapeHtml(item) + '</div>').join('') + '</div>';
     }
 
-    function renderNotes(items) {
-      return [
-        '<aside class="note-panel">',
-        '<h2 class="panel-title">台本メモ <span>Speaker Notes</span></h2>',
-        renderBullets(items || [], 'note-list' + ((items || []).length > 3 ? ' tight' : '')),
-        '</aside>'
-      ].join('');
-    }
-
-    function renderQa(items) {
-      if (!items || !items.length) {
-        return '';
-      }
-      return [
-        '<aside class="qa-panel">',
-        '<h2 class="panel-title">想定 Q&A <span>Quick Answers</span></h2>',
-        '<ul class="qa-list tight">',
-        items.map((item) => '<li><strong>Q.</strong> ' + escapeHtml(item.q) + '<br><strong>A.</strong> ' + escapeHtml(item.a) + '</li>').join(''),
-        '</ul>',
-        '</aside>'
-      ].join('');
-    }
-
-    function renderSlide(index) {
-      const slide = slides[index];
+    function renderSlide(slide, index) {
       const progress = ((index + 1) / slides.length) * 100;
-      const leftColumn = [
-        slide.lead ? '<p class="lead">' + escapeHtml(slide.lead) + '</p>' : '',
-        renderTimeline(slide.timeline),
-        renderSplitCards(slide.splitCards),
-        renderSections(slide.sections),
+      const bodyParts = [
+        slide.lead ? '<div class="stack"><p class="lead">' + escapeHtml(slide.lead) + '</p></div>' : '',
+        slide.timeline ? '<div class="stack">' + renderTimeline(slide.timeline) + '</div>' : '',
+        slide.splitCards ? '<div class="stack">' + renderSplitCards(slide.splitCards) + '</div>' : '',
+        slide.sections ? '<div class="stack">' + renderSections(slide.sections) + '</div>' : '',
         slide.quote ? '<div class="quote-box">' + escapeHtml(slide.quote) + '</div>' : '',
-        renderChips(slide.chips)
+        slide.chips ? '<div class="stack">' + renderChips(slide.chips) + '</div>' : ''
       ].join('');
 
-      const sidePanels = [];
-      if (showNotes) {
-        sidePanels.push(renderNotes(slide.notes));
-      }
-      if (showQa && slide.qa && slide.qa.length) {
-        sidePanels.push(renderQa(slide.qa));
-      }
-      const hasSidePanels = sidePanels.length > 0;
-
-      slideRoot.classList.remove('enter');
-      void slideRoot.offsetWidth;
-      slideRoot.classList.add('enter');
-
-      slideRoot.innerHTML = [
+      return [
+        '<article class="slide" data-index="' + index + '">',
         '<div class="slide-header">',
-        '<div class="slide-kicker">' + escapeHtml(slide.kicker) + '</div>',
-        '<h1 class="slide-title">' + escapeHtml(slide.title) + '</h1>',
-        '<div class="slide-subtitle">' + escapeHtml(slide.subtitle) + '</div>',
+        '<div class="kicker">' + escapeHtml(slide.kicker) + '</div>',
+        '<h1 class="title">' + escapeHtml(slide.title) + '</h1>',
+        '<div class="subtitle">' + escapeHtml(slide.subtitle) + '</div>',
         '</div>',
-        '<div class="slide-main' + (hasSidePanels ? '' : ' single-column') + '">',
-        '<section class="stack' + ((slide.sections && slide.sections.length > 1) || slide.timeline || slide.splitCards ? '' : ' compact') + '">',
-        leftColumn,
-        '</section>',
-        hasSidePanels ? '<div style="display:grid; gap:16px; align-content:start;">' + sidePanels.join('') + '</div>' : '',
-        '</div>',
+        '<div class="slide-body">' + bodyParts + '</div>',
         '<div class="slide-footer">',
         '<div class="footer-note">' + escapeHtml(slide.footer || '') + '</div>',
         '<div class="progress">',
         '<div class="progress-bar" aria-hidden="true"><div class="progress-fill" style="width:' + progress + '%"></div></div>',
         '<div class="progress-copy">' + escapeHtml(slide.chapter) + '</div>',
         '</div>',
-        '</div>'
+        '</div>',
+        '</article>'
       ].join('');
-
-      slideCount.textContent = 'Slide ' + (index + 1) + ' / ' + slides.length;
-      tocCounter.textContent = (index + 1) + ' / ' + slides.length;
-      chapterLabel.textContent = slide.chapter;
-      prevButton.disabled = index === 0;
-      nextButton.disabled = index === slides.length - 1;
-      notesToggle.classList.toggle('active', showNotes);
-      notesToggle.setAttribute('aria-pressed', showNotes ? 'true' : 'false');
-      qaToggle.classList.toggle('active', showQa);
-      qaToggle.setAttribute('aria-pressed', showQa ? 'true' : 'false');
-      qaToggle.hidden = !(slide.qa && slide.qa.length);
-
-      window.location.hash = 'slide-' + (index + 1);
-
-      Array.prototype.forEach.call(tocList.querySelectorAll('.toc-item'), (button, buttonIndex) => {
-        const isActive = buttonIndex === index;
-        button.classList.toggle('active', isActive);
-        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      });
     }
 
-    function goTo(index) {
-      const nextIndex = clampIndex(index);
-      if (nextIndex === currentIndex) {
-        renderSlide(currentIndex);
-        return;
-      }
-      currentIndex = nextIndex;
-      renderSlide(currentIndex);
+    function buildSlides() {
+      slideTrack.innerHTML = slides.map(renderSlide).join('');
     }
 
     function buildToc() {
@@ -1387,22 +1112,39 @@
       });
     }
 
+    function syncUi() {
+      const slide = slides[currentIndex];
+      slideCount.textContent = 'Slide ' + (currentIndex + 1) + ' / ' + slides.length;
+      tocCounter.textContent = (currentIndex + 1) + ' / ' + slides.length;
+      chapterLabel.textContent = slide.chapter;
+      prevButton.disabled = currentIndex === 0;
+      nextButton.disabled = currentIndex === slides.length - 1;
+      slideTrack.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+      window.location.hash = 'slide-' + (currentIndex + 1);
+
+      Array.prototype.forEach.call(tocList.querySelectorAll('.toc-item'), (button, index) => {
+        const isActive = index === currentIndex;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        if (isActive) {
+          button.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      });
+    }
+
+    function goTo(index) {
+      currentIndex = clampIndex(index);
+      syncUi();
+    }
+
     prevButton.addEventListener('click', () => goTo(currentIndex - 1));
     nextButton.addEventListener('click', () => goTo(currentIndex + 1));
-    notesToggle.addEventListener('click', () => {
-      showNotes = !showNotes;
-      renderSlide(currentIndex);
-    });
-    qaToggle.addEventListener('click', () => {
-      showQa = !showQa;
-      renderSlide(currentIndex);
-    });
 
-    slideRoot.addEventListener('click', (event) => {
-      if (event.target.closest('button')) {
+    slideTrack.addEventListener('click', (event) => {
+      if (window.matchMedia('(max-width: 960px)').matches) {
         return;
       }
-      const bounds = slideRoot.getBoundingClientRect();
+      const bounds = slideTrack.getBoundingClientRect();
       const clickedLeft = event.clientX - bounds.left < bounds.width / 2;
       goTo(currentIndex + (clickedLeft ? -1 : 1));
     });
@@ -1427,15 +1169,16 @@
     }, { passive: false });
 
     window.addEventListener('hashchange', () => {
-      const hashIndex = clampIndex(readHashIndex());
-      if (hashIndex !== currentIndex) {
-        currentIndex = hashIndex;
-        renderSlide(currentIndex);
+      const nextIndex = clampIndex(readHashIndex());
+      if (nextIndex !== currentIndex) {
+        currentIndex = nextIndex;
+        syncUi();
       }
     });
 
+    buildSlides();
     buildToc();
-    renderSlide(currentIndex);
+    syncUi();
   </script>
 </body>
 </html>
