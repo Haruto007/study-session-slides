@@ -186,21 +186,29 @@
     .viewport {
       position: relative;
       min-height: 0;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
       border-radius: var(--radius-xl);
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .viewport::-webkit-scrollbar {
+      display: none;
     }
 
     .track {
       height: 100%;
-      display: flex;
-      transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: transform;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 100%;
     }
 
     .slide {
       position: relative;
-      flex: 0 0 100%;
-      min-width: 100%;
+      width: 100%;
+      min-width: 0;
       min-height: 100%;
       padding: 40px 44px 34px;
       display: grid;
@@ -211,6 +219,7 @@
       background: var(--panel-strong);
       border: 1px solid var(--line);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      scroll-snap-align: start;
     }
 
     .slide::before,
@@ -568,12 +577,14 @@
 
       .viewport {
         overflow: visible;
+        scroll-snap-type: none;
       }
 
       .track {
         display: grid;
         gap: 14px;
-        transform: none !important;
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
       }
 
       .slide {
@@ -964,6 +975,7 @@
     ];
 
     const slideTrack = document.getElementById('slideTrack');
+    const viewport = document.querySelector('.viewport');
     const tocList = document.getElementById('tocList');
     const tocCounter = document.getElementById('tocCounter');
     const slideCount = document.getElementById('slideCount');
@@ -972,6 +984,8 @@
     const nextButton = document.getElementById('nextButton');
 
     let currentIndex = clampIndex(readHashIndex());
+    let isProgrammaticScroll = false;
+    let wheelThrottle = null;
 
     function readHashIndex() {
       const raw = window.location.hash.replace('#slide-', '');
@@ -1119,8 +1133,18 @@
       chapterLabel.textContent = slide.chapter;
       prevButton.disabled = currentIndex === 0;
       nextButton.disabled = currentIndex === slides.length - 1;
-      slideTrack.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
       window.location.hash = 'slide-' + (currentIndex + 1);
+
+      if (!isCompactLayout()) {
+        isProgrammaticScroll = true;
+        viewport.scrollTo({
+          left: currentIndex * viewport.clientWidth,
+          behavior: 'smooth'
+        });
+        window.setTimeout(() => {
+          isProgrammaticScroll = false;
+        }, 460);
+      }
 
       Array.prototype.forEach.call(tocList.querySelectorAll('.toc-item'), (button, index) => {
         const isActive = index === currentIndex;
@@ -1137,17 +1161,67 @@
       syncUi();
     }
 
+    function isCompactLayout() {
+      return window.matchMedia('(max-width: 960px)').matches;
+    }
+
+    function syncIndexFromScroll() {
+      if (isCompactLayout() || isProgrammaticScroll) {
+        return;
+      }
+      const nextIndex = clampIndex(Math.round(viewport.scrollLeft / Math.max(viewport.clientWidth, 1)));
+      if (nextIndex !== currentIndex) {
+        currentIndex = nextIndex;
+        slideCount.textContent = 'Slide ' + (currentIndex + 1) + ' / ' + slides.length;
+        tocCounter.textContent = (currentIndex + 1) + ' / ' + slides.length;
+        chapterLabel.textContent = slides[currentIndex].chapter;
+        prevButton.disabled = currentIndex === 0;
+        nextButton.disabled = currentIndex === slides.length - 1;
+        window.location.hash = 'slide-' + (currentIndex + 1);
+
+        Array.prototype.forEach.call(tocList.querySelectorAll('.toc-item'), (button, index) => {
+          const isActive = index === currentIndex;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          if (isActive) {
+            button.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          }
+        });
+      }
+    }
+
     prevButton.addEventListener('click', () => goTo(currentIndex - 1));
     nextButton.addEventListener('click', () => goTo(currentIndex + 1));
 
-    slideTrack.addEventListener('click', (event) => {
-      if (window.matchMedia('(max-width: 960px)').matches) {
+    viewport.addEventListener('click', (event) => {
+      if (isCompactLayout()) {
         return;
       }
-      const bounds = slideTrack.getBoundingClientRect();
+      const bounds = viewport.getBoundingClientRect();
       const clickedLeft = event.clientX - bounds.left < bounds.width / 2;
       goTo(currentIndex + (clickedLeft ? -1 : 1));
     });
+
+    viewport.addEventListener('scroll', () => {
+      if (wheelThrottle) {
+        window.clearTimeout(wheelThrottle);
+      }
+      wheelThrottle = window.setTimeout(syncIndexFromScroll, 40);
+    }, { passive: true });
+
+    viewport.addEventListener('wheel', (event) => {
+      if (isCompactLayout()) {
+        return;
+      }
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+        return;
+      }
+      event.preventDefault();
+      viewport.scrollBy({
+        left: event.deltaY,
+        behavior: 'auto'
+      });
+    }, { passive: false });
 
     window.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
@@ -1173,6 +1247,12 @@
       if (nextIndex !== currentIndex) {
         currentIndex = nextIndex;
         syncUi();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (!isCompactLayout()) {
+        viewport.scrollLeft = currentIndex * viewport.clientWidth;
       }
     });
 
