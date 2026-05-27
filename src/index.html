@@ -982,6 +982,7 @@
     const chapterLabel = document.getElementById('chapterLabel');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
+    const controls = document.querySelector('.controls');
 
     let currentIndex = clampIndex(readHashIndex());
     let isProgrammaticScroll = false;
@@ -1113,7 +1114,7 @@
       chapterLabel.textContent = slide.chapter;
       prevButton.disabled = currentIndex === 0;
       nextButton.disabled = currentIndex === slides.length - 1;
-      window.location.hash = 'slide-' + (currentIndex + 1);
+      syncHash(currentIndex);
 
       if (!isCompactLayout()) {
         isProgrammaticScroll = true;
@@ -1132,6 +1133,22 @@
       syncUi();
     }
 
+    function syncHash(index) {
+      const hash = '#slide-' + (index + 1);
+      // Some embedded contexts can fail on hash assignment; don't block navigation.
+      try {
+        if (window.location.hash !== hash) {
+          window.history.replaceState(null, '', hash);
+        }
+      } catch (error) {
+        try {
+          window.location.hash = hash;
+        } catch (_) {
+          // Ignore URL update failures and keep slide navigation working.
+        }
+      }
+    }
+
     function isCompactLayout() {
       return window.matchMedia('(max-width: 960px)').matches;
     }
@@ -1147,12 +1164,17 @@
         chapterLabel.textContent = slides[currentIndex].chapter;
         prevButton.disabled = currentIndex === 0;
         nextButton.disabled = currentIndex === slides.length - 1;
-        window.location.hash = 'slide-' + (currentIndex + 1);
+        syncHash(currentIndex);
       }
     }
 
     prevButton.addEventListener('click', () => goTo(currentIndex - 1));
     nextButton.addEventListener('click', () => goTo(currentIndex + 1));
+
+    controls.addEventListener('click', (event) => {
+      // Keep header button clicks isolated from stage click navigation.
+      event.stopPropagation();
+    });
 
     viewport.addEventListener('click', (event) => {
       if (isCompactLayout()) {
